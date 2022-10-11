@@ -12,8 +12,8 @@ public class PlayerController : MonoBehaviour
     
     public float _runSpeed;
     private float _strafeSpeed;
-    private float currentPosX = 0.0f;
-    private float _animatorRunSpeedValue = 1.0f;
+    private float currentPosX;
+    private float _animatorRunSpeedValue = 1.2f;
     private bool isJumping;
     private bool isRoll;
     private bool isLive = true;
@@ -26,9 +26,9 @@ public class PlayerController : MonoBehaviour
     private static readonly int _jumpTrigger = Animator.StringToHash("JumpTrigger");
     private static readonly int _animatorRunSpeed = Animator.StringToHash("RunSpeed");
     private static readonly int _lyingTrigger = Animator.StringToHash("LyingObstacleTrigger");
-    private static readonly int _animatorJumpSpeed = Animator.StringToHash("JumpSpeed");
     private static readonly int _turnTrigger = Animator.StringToHash("TurnTrigger");
     private static readonly int _rollSpeed = Animator.StringToHash("RollSpeed");
+    private static readonly int _turnSpeed = Animator.StringToHash("TurnSpeed");
     private static readonly int _rollTrigger = Animator.StringToHash("RollTrigger");
 
     private void Start()
@@ -37,10 +37,6 @@ public class PlayerController : MonoBehaviour
         _collider = GetComponent<CapsuleCollider>();
         _animator = GetComponent<Animator>();
         _rigidbody = GetComponent<Rigidbody>();
-        _input.onRightSwipe += OnRightSwipe;
-        _input.onLeftSwipe += OnLeftSwipe;
-        _input.onUpSwipe += OnUpSwipe;
-        _input.onDownSwipe += OnDownSwipe;
         GameController.onGameStart += OnGameStart;
         GameController.onGameStop += StopGame;
         GameController.onGameRestart += UnSubscribe;
@@ -66,7 +62,11 @@ public class PlayerController : MonoBehaviour
     
     private void OnGameStart()
     {
-        StartRun(() => SetSpeed(2.0f));
+        _input.onRightSwipe += OnRightSwipe;
+        _input.onLeftSwipe += OnLeftSwipe;
+        _input.onUpSwipe += OnUpSwipe;
+        _input.onDownSwipe += OnDownSwipe;
+        StartRun(() => SetSpeed(3.0f));
     }
     
     private void OnDownSwipe()
@@ -81,12 +81,12 @@ public class PlayerController : MonoBehaviour
 
     private void OnLeftSwipe()
     {
-        Strafe(-1.0f);
+        Strafe(-2.0f);
     }
 
     private void OnRightSwipe()
     {
-        Strafe(1.0f);
+        Strafe(2.0f);
     }
 
     public void StartRun(Action action)
@@ -99,12 +99,12 @@ public class PlayerController : MonoBehaviour
     {
         if (!CanStrafe(speed)) return;
         _strafeSpeed = speed;
-        currentPosX += speed;
+        currentPosX += speed / 2.0f;
     }
 
     public void PlayJump()
     {
-        if (!isJumping && isLive && !isRoll) StartCoroutine(Jumping(() => _rigidbody.AddForce(0.0f, 250.0f, 0.0f)));
+        if (!isJumping && isLive && !isRoll) StartCoroutine(Jumping(() => _rigidbody.AddForce(0.0f, 175.0f, 0.0f)));
     }
 
     public void PlayRoll()
@@ -115,9 +115,11 @@ public class PlayerController : MonoBehaviour
     {
         if (isJumping || !isLive || isRoll)
         {
-            return false;
+            //return false;
         }
-        return currentPosX + speed >= -1.0f && currentPosX + speed <= 1.0f;
+        //return currentPosX + speed >= -1.0f && currentPosX + speed <= 1.0f;
+        return currentPosX + speed / 2.0f >= -1.0f && currentPosX + speed / 2.0f <= 1.0f;
+
     }
     
     public void SetSpeed(float speed)
@@ -167,8 +169,9 @@ public class PlayerController : MonoBehaviour
     }
     private IEnumerator Turn(Action action)
     {
+        _animator.SetFloat(_turnSpeed, 1.36f);
         _animator.SetTrigger(_turnTrigger);
-        yield return new WaitForSeconds(1.38f);
+        yield return new WaitForSeconds(1.0f);//1.38f
         transform.localRotation = Quaternion.identity;
         action?.Invoke();
     }
@@ -178,7 +181,7 @@ public class PlayerController : MonoBehaviour
         isJumping = true;
         _animator.SetTrigger(_jumpTrigger);
         action?.Invoke();
-        yield return new WaitForSeconds(0.867f);
+        yield return new WaitForSeconds(1.0f);//0.867f
         isJumping = false;
     }
 
@@ -187,19 +190,19 @@ public class PlayerController : MonoBehaviour
         isRoll = true;
         _collider.height = 0.75f;
         _collider.center = new Vector3(0.0f, 0.4f, 0.2f);
-        _animator.SetFloat(_rollSpeed, 1.0f);
+        _animator.SetFloat(_rollSpeed, 1.75f);
         _animator.SetTrigger(_rollTrigger);
-        yield return new WaitForSeconds(2.0f);
+        yield return new WaitForSeconds(1.0f);//2
         _collider.height = 1.7f;
         _collider.center = new Vector3(0.0f, 0.85f, 0.2f);
         isRoll = false;
     }
     private IEnumerator SpeedUp()
     {
-        yield return new WaitForSeconds(2.0f);
+        yield return new WaitForSeconds(1.0f);
         _runSpeed += 0.1f;
-        _animatorRunSpeedValue += 0.05f;
-        _animator.SetFloat(_animatorJumpSpeed, _animatorRunSpeedValue);
+        _animatorRunSpeedValue += 0.01f;
+        _animator.SetFloat(_animatorRunSpeed, _animatorRunSpeedValue);
         
         StartCoroutine(SpeedUp());
     }

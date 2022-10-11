@@ -3,8 +3,7 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
     [SerializeField] private PlayerController _player;
-    [SerializeField] private Camera _camera;
-    private const float _playerDistance = 4;
+    private const float _playerDistance = 2;
     
    
     private void Update()

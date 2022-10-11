@@ -11,7 +11,7 @@ public class StreetGenerator : MonoBehaviour
     private readonly List<GameObject> _street = new List<GameObject>();
     public List<GameObject> _coins = new List<GameObject>();
     private const float _streetMaxCount = 3.0f;
-    private const float _streetLength = 29.6f;
+    private const float _streetLength = 29.5f;
 
 
     private void CreatePies()

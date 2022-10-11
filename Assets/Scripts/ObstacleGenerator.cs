@@ -42,7 +42,7 @@ public class ObstacleGenerator : MonoBehaviour
             posZ = _usedObstacles[^1].transform.position.z;
 
         }
-        return new Vector3(posX, 0.0f, Random.Range(posZ + 5, posZ + 10));
+        return new Vector3(posX, 0.0f, Random.Range(posZ + 7, posZ + 14));
     }
 
     private GameObject GetRandomObstacle()
