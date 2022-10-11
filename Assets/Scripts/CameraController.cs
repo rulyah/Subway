@@ -8,10 +8,7 @@ public class CameraController : MonoBehaviour
    
     private void Update()
     {
-        var distance = Vector3.Distance(_player.transform.position, transform.position);
-        if (!(distance > _playerDistance)) return;
-        var speed = _player.transform.position.z - transform.position.z - _playerDistance;
-        if (speed < 0) speed = 0;
-        transform.position += new Vector3(0.0f,0.0f,speed) * Time.deltaTime;
+        var cameraPos = new Vector3(transform.position.x, transform.position.y, _player.transform.position.z - _playerDistance);
+        transform.position = Vector3.Lerp(transform.position, cameraPos, 30.0f * Time.deltaTime);
     }
 }

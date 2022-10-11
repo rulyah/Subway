@@ -6,7 +6,6 @@ public class PlayerController : MonoBehaviour
 {
     private Animator _animator;
     private Rigidbody _rigidbody;
-    private CapsuleCollider _collider;
 
     [SerializeField] private InputManager _input;
     
@@ -34,7 +33,6 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         coinsCount = 0;
-        _collider = GetComponent<CapsuleCollider>();
         _animator = GetComponent<Animator>();
         _rigidbody = GetComponent<Rigidbody>();
         GameController.onGameStart += OnGameStart;
@@ -117,7 +115,6 @@ public class PlayerController : MonoBehaviour
         {
             //return false;
         }
-        //return currentPosX + speed >= -1.0f && currentPosX + speed <= 1.0f;
         return currentPosX + speed / 2.0f >= -1.0f && currentPosX + speed / 2.0f <= 1.0f;
 
     }
@@ -188,13 +185,9 @@ public class PlayerController : MonoBehaviour
     private IEnumerator Roll()
     {
         isRoll = true;
-        _collider.height = 0.75f;
-        _collider.center = new Vector3(0.0f, 0.4f, 0.2f);
         _animator.SetFloat(_rollSpeed, 1.75f);
         _animator.SetTrigger(_rollTrigger);
         yield return new WaitForSeconds(1.0f);//2
-        _collider.height = 1.7f;
-        _collider.center = new Vector3(0.0f, 0.85f, 0.2f);
         isRoll = false;
     }
     private IEnumerator SpeedUp()

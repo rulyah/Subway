@@ -10,28 +10,53 @@ public class InputManager : MonoBehaviour
 
     private Vector3 _startPoint;
     private Vector3 _finishPoint;
+    private bool isGameStart;
+
+    private void Start()
+    {
+        GameController.onGameStart += GameStart;
+        GameController.onGameStop += GameStop;
+    }
+
+    private void GameStart()
+    {
+        isGameStart = true;
+        _startPoint = Vector3.zero;
+        _finishPoint = Vector3.zero;
+    }
+    private void GameStop()
+    {
+        GameController.onGameStart -= GameStart;
+        GameController.onGameStop -= GameStop;
+        isGameStart = false;
+    }
+    
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Mouse0))
+        if (isGameStart)
         {
-            _startPoint = Input.mousePosition;
-        }
-
-        if (Input.GetKeyUp(KeyCode.Mouse0))
-        {
-            _finishPoint = Input.mousePosition;
-            if (_startPoint == _finishPoint) return;
-            
-            var direction = Vector3.Normalize(_finishPoint - _startPoint);
-
-            if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
+            if (Input.GetKeyDown(KeyCode.Mouse0))
             {
-                if (direction.x > 0.0f) onRightSwipe?.Invoke();
-                else onLeftSwipe?.Invoke();
+                _startPoint = Input.mousePosition;
             }
-            else if (direction.y > 0.0f) onUpSwipe?.Invoke();
-            else onDownSwipe?.Invoke();
+
+            if (Input.GetKeyUp(KeyCode.Mouse0))
+            {
+                if(_startPoint == Vector3.zero) return;
+                _finishPoint = Input.mousePosition;
+                if (_startPoint == _finishPoint) return;
+
+                var direction = Vector3.Normalize(_finishPoint - _startPoint);
+
+                if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
+                {
+                    if (direction.x > 0.0f) onRightSwipe?.Invoke();
+                    else onLeftSwipe?.Invoke();
+                }
+                else if (direction.y > 0.0f) onUpSwipe?.Invoke();
+                else onDownSwipe?.Invoke();
+            }
         }
     }
 }
